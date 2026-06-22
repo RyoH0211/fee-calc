@@ -358,6 +358,7 @@
 
       const total = baseFee + extraFee + optionFee;
 
+      // 表示
       document.getElementById("displayCustomerName").innerText = customerName;
       document.getElementById("displayDuration").innerText = `${hours}時間${minutes}分`;
       document.getElementById("displayBaseFee").innerText = formatYen(baseFee);
@@ -370,6 +371,22 @@
         optionLines.length > 0 ? optionLines.join("\n") : "オプション利用なし";
 
       document.getElementById("resultArea").style.display = "block";
+
+      // ★★★ GAS に送信 ★★★
+      fetch("https://script.google.com/macros/s/AKfycbzs4lAP-a50VjgxlD-xGvseaSZ-oKH59N_xMgulFXYCmXN5WFxM9cRqo60pIB-Ps2EKtg/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customerName,
+          startTime: startStr,
+          endTime: endStr,
+          duration: `${hours}時間${minutes}分`,
+          baseFee,
+          extraFee,
+          optionFee,
+          total
+        })
+      });
     }
   </script>
 </body>
