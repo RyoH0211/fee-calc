@@ -44,7 +44,8 @@
     }
 
     input[type="time"],
-    input[type="number"] {
+    input[type="number"],
+    input[type="text"] {
       width: 100%;
       padding: 10px;
       font-size: 16px;
@@ -118,10 +119,6 @@
       margin: 4px 0;
     }
 
-    .result-row strong {
-      font-weight: 600;
-    }
-
     .total {
       font-size: 20px;
       font-weight: bold;
@@ -145,6 +142,12 @@
   </header>
 
   <div class="container">
+
+    <!-- お客様名入力 -->
+    <h2>お客様情報</h2>
+    <label for="customerName">お客様のお名前</label>
+    <input type="text" id="customerName" placeholder="例：山田太郎">
+
     <!-- 利用時間入力 -->
     <h2>利用時間</h2>
     <label for="startTime">開始時刻</label>
@@ -161,6 +164,11 @@
     <div class="option-row">
       <span>キャストドリンク（1000円）</span>
       <input type="number" id="castDrink" min="0" value="0">
+    </div>
+
+    <div class="option-row">
+      <span>キャストドリンクB（1000円）</span>
+      <input type="number" id="castDrinkB" min="0" value="0">
     </div>
 
     <div class="option-row">
@@ -204,24 +212,48 @@
       <input type="number" id="moetRose" min="0" value="0">
     </div>
 
+    <div class="option-row">
+      <span>モエアイス（64000円）</span>
+      <input type="number" id="moetIce" min="0" value="0">
+    </div>
+
+    <div class="option-row">
+      <span>ドンペリ（96000円）</span>
+      <input type="number" id="domPerignon" min="0" value="0">
+    </div>
+
+    <div class="option-row">
+      <span>エンジェル（128000円）</span>
+      <input type="number" id="angel" min="0" value="0">
+    </div>
+
     <!-- 計算ボタン -->
     <button onclick="calculate()">料金を計算する ▶︎</button>
 
     <!-- 結果表示 -->
     <div id="resultArea" class="result-card" style="display:none;">
       <h3>計算結果</h3>
+
+      <div class="result-row">
+        <span>お客様名</span>
+        <span id="displayCustomerName"></span>
+      </div>
+
       <div class="result-row">
         <span>利用時間</span>
         <span id="displayDuration"></span>
       </div>
+
       <div class="result-row">
         <span>基本料金</span>
         <span id="displayBaseFee"></span>
       </div>
+
       <div class="result-row">
         <span>延長料金（30分単位）</span>
         <span id="displayExtraFee"></span>
       </div>
+
       <div class="result-row">
         <span>延長コマ数</span>
         <span id="displayExtraUnits"></span>
@@ -252,6 +284,8 @@
     }
 
     function calculate() {
+      const customerName = document.getElementById("customerName").value || "（未入力）";
+
       const startStr = document.getElementById("startTime").value;
       const endStr = document.getElementById("endTime").value;
 
@@ -279,6 +313,7 @@
       const extraFee = extraUnits * 1000;
 
       const castDrink = Number(document.getElementById("castDrink").value || 0);
+      const castDrinkB = Number(document.getElementById("castDrinkB").value || 0);
       const castTequila = Number(document.getElementById("castTequila").value || 0);
       const castKleiner = Number(document.getElementById("castKleiner").value || 0);
 
@@ -289,18 +324,27 @@
       const originalChampagne = Number(document.getElementById("originalChampagne").value || 0);
       const moetRose = Number(document.getElementById("moetRose").value || 0);
 
+      const moetIce = Number(document.getElementById("moetIce").value || 0);
+      const domPerignon = Number(document.getElementById("domPerignon").value || 0);
+      const angel = Number(document.getElementById("angel").value || 0);
+
       const optionFee =
         castDrink * 1000 +
+        castDrinkB * 1000 +
         castTequila * 2000 +
         castKleiner * 1000 +
         generalTequila * 1000 +
         generalKleiner * 1000 +
         cafeDeParis * 8000 +
         originalChampagne * 16000 +
-        moetRose * 32000;
+        moetRose * 32000 +
+        moetIce * 64000 +
+        domPerignon * 96000 +
+        angel * 128000;
 
       const optionLines = [];
       if (castDrink > 0) optionLines.push(`キャストドリンク × ${castDrink}：${formatYen(castDrink * 1000)}`);
+      if (castDrinkB > 0) optionLines.push(`キャストドリンクB × ${castDrinkB}：${formatYen(castDrinkB * 1000)}`);
       if (castTequila > 0) optionLines.push(`キャストテキーラ × ${castTequila}：${formatYen(castTequila * 2000)}`);
       if (castKleiner > 0) optionLines.push(`キャストクライナー × ${castKleiner}：${formatYen(castKleiner * 1000)}`);
       if (generalTequila > 0) optionLines.push(`一般テキーラ × ${generalTequila}：${formatYen(generalTequila * 1000)}`);
@@ -308,15 +352,17 @@
       if (cafeDeParis > 0) optionLines.push(`カフェドパリ × ${cafeDeParis}：${formatYen(cafeDeParis * 8000)}`);
       if (originalChampagne > 0) optionLines.push(`オリシャン × ${originalChampagne}：${formatYen(originalChampagne * 16000)}`);
       if (moetRose > 0) optionLines.push(`モエロゼ × ${moetRose}：${formatYen(moetRose * 32000)}`);
+      if (moetIce > 0) optionLines.push(`モエアイス × ${moetIce}：${formatYen(moetIce * 64000)}`);
+      if (domPerignon > 0) optionLines.push(`ドンペリ × ${domPerignon}：${formatYen(domPerignon * 96000)}`);
+      if (angel > 0) optionLines.push(`エンジェル × ${angel}：${formatYen(angel * 128000)}`);
 
       const total = baseFee + extraFee + optionFee;
 
-      document.getElementById("displayDuration").innerText =
-        `${hours}時間${minutes}分`;
+      document.getElementById("displayCustomerName").innerText = customerName;
+      document.getElementById("displayDuration").innerText = `${hours}時間${minutes}分`;
       document.getElementById("displayBaseFee").innerText = formatYen(baseFee);
       document.getElementById("displayExtraFee").innerText = formatYen(extraFee);
-      document.getElementById("displayExtraUnits").innerText =
-        `${extraUnits}コマ（${extraMinutes}分）`;
+      document.getElementById("displayExtraUnits").innerText = `${extraUnits}コマ（${extraMinutes}分）`;
       document.getElementById("displayOptionFee").innerText = formatYen(optionFee);
       document.getElementById("displayTotal").innerText = formatYen(total);
 
