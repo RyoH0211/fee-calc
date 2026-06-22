@@ -55,15 +55,6 @@
       background: #fff;
     }
 
-    input[type="number"] {
-      -moz-appearance: textfield;
-    }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
-
     .option-group-title {
       font-weight: bold;
       margin-top: 10px;
@@ -144,6 +135,7 @@
       font-size: 12px;
       color: #666;
       margin-top: 4px;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -163,41 +155,50 @@
     <!-- オプション入力 -->
     <h2>オプション</h2>
 
+    <!-- キャストドリンクカテゴリ -->
     <div class="option-group-title">キャストドリンク</div>
+
     <div class="option-row">
       <span>キャストドリンク（1000円）</span>
       <input type="number" id="castDrink" min="0" value="0">
     </div>
 
-    <div class="option-group-title">一般ドリンク</div>
-    <div class="option-row">
-      <span>一般テキーラ（1000円）</span>
-      <input type="number" id="generalTequila" min="0" value="0">
-    </div>
-    <div class="option-row">
-      <span>一般クライナー（1000円）</span>
-      <input type="number" id="generalKleiner" min="0" value="0">
-    </div>
-
-    <div class="option-group-title">キャストドリンク（強め）</div>
     <div class="option-row">
       <span>キャストテキーラ（2000円）</span>
       <input type="number" id="castTequila" min="0" value="0">
     </div>
+
     <div class="option-row">
       <span>キャストクライナー（1000円）</span>
       <input type="number" id="castKleiner" min="0" value="0">
     </div>
 
+    <!-- 一般ドリンク -->
+    <div class="option-group-title">一般ドリンク</div>
+
+    <div class="option-row">
+      <span>一般テキーラ（1000円）</span>
+      <input type="number" id="generalTequila" min="0" value="0">
+    </div>
+
+    <div class="option-row">
+      <span>一般クライナー（1000円）</span>
+      <input type="number" id="generalKleiner" min="0" value="0">
+    </div>
+
+    <!-- ボトル類 -->
     <div class="option-group-title">ボトル類</div>
+
     <div class="option-row">
       <span>カフェドパリ（8000円）</span>
       <input type="number" id="cafeDeParis" min="0" value="0">
     </div>
+
     <div class="option-row">
       <span>オリシャン（16000円）</span>
       <input type="number" id="originalChampagne" min="0" value="0">
     </div>
+
     <div class="option-row">
       <span>モエロゼ（32000円）</span>
       <input type="number" id="moetRose" min="0" value="0">
@@ -268,53 +269,48 @@
         return;
       }
 
-      // 利用時間（表示用）
       const hours = Math.floor(duration / 60);
       const minutes = duration % 60;
 
-      // 基本料金
       const baseFee = 3000;
 
-      // 延長計算
       const extraMinutes = Math.max(0, duration - 60);
       const extraUnits = extraMinutes > 0 ? Math.ceil(extraMinutes / 30) : 0;
       const extraFee = extraUnits * 1000;
 
-      // オプション入力値
       const castDrink = Number(document.getElementById("castDrink").value || 0);
-      const generalTequila = Number(document.getElementById("generalTequila").value || 0);
-      const generalKleiner = Number(document.getElementById("generalKleiner").value || 0);
       const castTequila = Number(document.getElementById("castTequila").value || 0);
       const castKleiner = Number(document.getElementById("castKleiner").value || 0);
+
+      const generalTequila = Number(document.getElementById("generalTequila").value || 0);
+      const generalKleiner = Number(document.getElementById("generalKleiner").value || 0);
+
       const cafeDeParis = Number(document.getElementById("cafeDeParis").value || 0);
       const originalChampagne = Number(document.getElementById("originalChampagne").value || 0);
       const moetRose = Number(document.getElementById("moetRose").value || 0);
 
-      // オプション料金計算
       const optionFee =
         castDrink * 1000 +
-        generalTequila * 1000 +
-        generalKleiner * 1000 +
         castTequila * 2000 +
         castKleiner * 1000 +
+        generalTequila * 1000 +
+        generalKleiner * 1000 +
         cafeDeParis * 8000 +
         originalChampagne * 16000 +
         moetRose * 32000;
 
-      // オプション内訳テキスト
       const optionLines = [];
       if (castDrink > 0) optionLines.push(`キャストドリンク × ${castDrink}：${formatYen(castDrink * 1000)}`);
-      if (generalTequila > 0) optionLines.push(`一般テキーラ × ${generalTequila}：${formatYen(generalTequila * 1000)}`);
-      if (generalKleiner > 0) optionLines.push(`一般クライナー × ${generalKleiner}：${formatYen(generalKleiner * 1000)}`);
       if (castTequila > 0) optionLines.push(`キャストテキーラ × ${castTequila}：${formatYen(castTequila * 2000)}`);
       if (castKleiner > 0) optionLines.push(`キャストクライナー × ${castKleiner}：${formatYen(castKleiner * 1000)}`);
+      if (generalTequila > 0) optionLines.push(`一般テキーラ × ${generalTequila}：${formatYen(generalTequila * 1000)}`);
+      if (generalKleiner > 0) optionLines.push(`一般クライナー × ${generalKleiner}：${formatYen(generalKleiner * 1000)}`);
       if (cafeDeParis > 0) optionLines.push(`カフェドパリ × ${cafeDeParis}：${formatYen(cafeDeParis * 8000)}`);
       if (originalChampagne > 0) optionLines.push(`オリシャン × ${originalChampagne}：${formatYen(originalChampagne * 16000)}`);
       if (moetRose > 0) optionLines.push(`モエロゼ × ${moetRose}：${formatYen(moetRose * 32000)}`);
 
       const total = baseFee + extraFee + optionFee;
 
-      // 表示反映
       document.getElementById("displayDuration").innerText =
         `${hours}時間${minutes}分`;
       document.getElementById("displayBaseFee").innerText = formatYen(baseFee);
